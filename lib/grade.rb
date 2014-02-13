@@ -2,7 +2,7 @@ require "grade/version"
 require 'yaml'
 
 module Grade
-  CONFIG = YAML.load('config.yml')
+  CONFIG = YAML.load(File.open('config.yml'))
 end
 
 require 'grade/helpers'
