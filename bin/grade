@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require 'grade'
+
+Grade::CLI.start(ARGV)
