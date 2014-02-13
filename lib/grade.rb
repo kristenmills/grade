@@ -1,5 +1,8 @@
 require "grade/version"
 
 module Grade
-  # Your code goes here...
+  CONFIG = Yaml.load('config.yml')
 end
+
+require 'grade/helpers'
+require 'grade/cli'
