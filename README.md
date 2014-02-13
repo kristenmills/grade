@@ -1,6 +1,6 @@
 # Grade
 
-TODO: Write a gem description
+Tool to help grade 250 stuff
 
 ## Installation
 
