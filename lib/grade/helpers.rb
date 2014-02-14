@@ -1,6 +1,7 @@
 require 'git'
 require 'colorize'
 require 'highline/import'
+require "#{Dir.pwd}/_projects/#{Grade::CONFIG['project_name']}/#{Grade::CONFIG['test_file']}"
 
 module Grade
   module Helpers
@@ -115,7 +116,7 @@ module Grade
       end
     end
 
-    def run_test
+    def run_tests
       tests = YAML.load(File.open("_projects/#{CONFIG['project_name']}/tests.yml"))
       tests = '' unless tests
       tests = {} if tests.empty?
@@ -132,9 +133,10 @@ module Grade
 
     def run_tests_for(person)
       results = {}
-      `ruby _projects/#{CONFIG['project_name']}/#{CONFIG['test_file']}`
+      test(person)
       results['points'] = ask('How many points is this worth?', Integer)
       results['notes'] = ask('Aditional notes: ').to_s
+      results
     end
   end
 end
