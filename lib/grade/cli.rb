@@ -29,7 +29,7 @@ module Grade
       end
     end
 
-    desc 'view [dce]', 'views the code for everyone'
+    desc 'view [dce]', 'views the code for everyone or specific user'
     def view(person=nil)
       if person.nil?
         Helpers.view_code
@@ -52,6 +52,26 @@ module Grade
     desc 'combine', 'combines all of the different files for a project'
     def combine
       Helpers.combine
+    end
+
+    desc 'run_tests [dce]', 'runs the tests for everyone or specific user'
+    def run_tests(person=nil)
+      if person.nil?
+        Helpers.run_tests
+      else
+        person = person.dup
+        tests = YAML.load(File.open("_projects/#{CONFIG['project_name']}/tests.yml"))
+        tests = '' unless tests
+        tests = {} if tests.empty?
+        begin
+          tests[person] = Helpers.run_tests_for(person)
+          tests = Hash[tests.sort]
+        ensure
+          File.open("_projects/#{CONFIG['project_name']}/tests.yml", 'w') do |f|
+            f.write(YAML.dump(tests))
+          end
+        end
+      end
     end
   end
 end

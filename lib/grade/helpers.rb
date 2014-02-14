@@ -84,7 +84,7 @@ module Grade
         end
       end
       g = Git.open("#{user}")
-      g.log.each do {|x| puts x.message}
+      g.log.each {|x| puts x.message}
       results['points'] = ask('How many points is this worth? ', Integer)
       results['notes'] = ask('Aditional notes: ').to_s
       results
@@ -93,7 +93,7 @@ module Grade
     def combine
       hash = {}
       Dir.new("_projects/#{CONFIG['project_name']}").each do |file|
-        next if file == '..' or file == '.' or file == 'combined.yml'
+        next if not /(.)\.yml/.match(file) or file == 'combined.yml'
         puts "Loading #{file.cyan}"
         file_name = /(.*)\.yml/.match(file)[1]
         yml = YAML.load(File.open("_projects/#{CONFIG['project_name']}/#{file}"))
@@ -113,6 +113,28 @@ module Grade
       File.open("_projects/#{CONFIG['project_name']}/combined.yml", 'w') do |f|
         f.write(YAML.dump(hash))
       end
+    end
+
+    def run_test
+      tests = YAML.load(File.open("_projects/#{CONFIG['project_name']}/tests.yml"))
+      tests = '' unless tests
+      tests = {} if tests.empty?
+
+      Dir.new('.').each do |directory|
+        next unless /[a-z]{2,3}\d{4}/.match(directory) and tests[directory].nil?
+        tests[directory] = run_tests_for(directory)
+      end
+    ensure
+      File.open("_projects/#{CONFIG['project_name']}/tests.yml", 'w') do |f|
+        f.write(YAML.dump(tests))
+      end
+    end
+
+    def run_tests_for(person)
+      results = {}
+      `ruby _projects/#{CONFIG['project_name']}/#{CONFIG['test_file']}`
+      results['points'] = ask('How many points is this worth?', Integer)
+      results['notes'] = ask('Aditional notes: ').to_s
     end
   end
 end
