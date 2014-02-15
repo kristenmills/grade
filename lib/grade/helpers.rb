@@ -78,12 +78,15 @@ module Grade
       puts "Displaying code for #{user.cyan}"
       CONFIG['project_files'].each do |file|
         if File.exists?("#{user}/#{CONFIG['project_name']}/#{file}")
+          puts "Displaying #{file.yellow}"
           code = File.open("#{user}/#{CONFIG['project_name']}/#{file}").read
           puts code
         else
           puts "No #{file} for #{user}".red
         end
       end
+      puts
+      puts "Displaying #{'git logs'.yellow}"
       g = Git.open("#{user}")
       g.log.each {|x| puts x.message}
       results['points'] = ask('How many points is this worth? ', Integer)
