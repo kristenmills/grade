@@ -16,29 +16,29 @@ module Grade
         g.pull
         date = CONFIG['extended']['dce'].include?(directory) ? CONFIG['extended']['due_date'] : CONFIG['due_date']
         commit = g.log.until(date).first
-        puts "Reseting to commit #{commit.sha.cyan}"
-        g.reset_hard(commit)
+        unless commit.nil?
+          puts "Reseting to commit #{commit.sha.cyan}"
+          g.reset_hard(commit)
+        end
       end
     end
 
     # Looks at everyones activity journals
-    def activity_journals
-      journals = YAML.load(File.open("_projects/#{CONFIG['project_name']}/journals.yml"))
+    def activity_journals(file)
+      journals = YAML.load(file)
       journals = '' unless journals
       journals = {} if journals.empty?
 
       Dir.new('.').each do |directory|
         next unless /[a-z]{2,3}\d{4}/.match(directory) and journals[directory].nil?
-        journals[directory] = activity_journal(directory)
+        journals[directory] = activity_journal_for(directory)
       end
     ensure
-      File.open("_projects/#{CONFIG['project_name']}/journals.yml", 'w') do |f|
-        f.write(YAML.dump(journals))
-      end
+      file.write(YAML.dump(journals))
     end
 
     # looks at an activity journal for a specific user
-    def activity_journal(user)
+    def activity_journal_for(user)
       results = {}
       puts "Displaying activity journal for #{user.cyan}"
       if File.exists?("#{user}/#{CONFIG['project_name']}/Activity_Journal.txt")
@@ -57,8 +57,8 @@ module Grade
     end
 
     # View code for people
-    def view_code
-      code = YAML.load(File.open("_projects/#{CONFIG['project_name']}/code.yml"))
+    def view_code(file)
+      code = YAML.load(file)
       code = '' unless code
       code = {} if code.empty?
 
@@ -67,9 +67,7 @@ module Grade
         code[directory] = view_code_for(directory)
       end
     ensure
-      File.open("_projects/#{CONFIG['project_name']}/code.yml", 'w') do |f|
-        f.write(YAML.dump(code))
-      end
+      file.write(YAML.dump(code))
     end
 
     # View code for a specific user
@@ -119,8 +117,8 @@ module Grade
       end
     end
 
-    def run_tests
-      tests = YAML.load(File.open("_projects/#{CONFIG['project_name']}/tests.yml"))
+    def run_tests(file)
+      tests = YAML.load(file)
       tests = '' unless tests
       tests = {} if tests.empty?
 
@@ -129,9 +127,7 @@ module Grade
         tests[directory] = run_tests_for(directory)
       end
     ensure
-      File.open("_projects/#{CONFIG['project_name']}/tests.yml", 'w') do |f|
-        f.write(YAML.dump(tests))
-      end
+      file.write(YAML.dump(tests))
     end
 
     def run_tests_for(person)

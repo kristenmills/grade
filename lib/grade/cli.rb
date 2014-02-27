@@ -11,40 +11,40 @@ module Grade
 
     desc 'journal [dce]', 'Checks the activity journals for everyone'
     def journal(person=nil)
+      FileUtils.mkdir_p("_projects/#{CONFIG['project_name']}")
+      file = File.open("_projects/#{CONFIG['project_name']}/journals.yml", 'rw')
       if person.nil?
-        Helpers.activity_journals
+        Helpers.activity_journals(file)
       else
         person = person.dup
-        journals = YAML.load(File.open("_projects/#{CONFIG['project_name']}/journals.yml"))
+        journals = YAML.load(file)
         journals = '' unless journals
         journals = {} if journals.empty?
         begin
-          journals[person] = Helpers.activity_journal(person)
+          journals[person] = Helpers.activity_journal_for(person)
           journals = Hash[journals.sort]
         ensure
-          File.open("_projects/#{CONFIG['project_name']}/journals.yml", 'w') do |f|
-            f.write(YAML.dump(journals))
-          end
+          file.write(YAML.dump(journals))
         end
       end
     end
 
     desc 'view [dce]', 'views the code for everyone or specific user'
     def view(person=nil)
+      FileUtils.mkdir_p("_projects/#{CONFIG['project_name']}")
+      file = File.open("_projects/#{CONFIG['project_name']}/code.yml", 'rw')
       if person.nil?
         Helpers.view_code
       else
         person = person.dup
-        code = YAML.load(File.open("_projects/#{CONFIG['project_name']}/code.yml"))
+        code = YAML.load(file)
         code = '' unless code
         code = {} if code.empty?
         begin
           code[person] = Helpers.view_code_for(person)
           code = Hash[code.sort]
         ensure
-          File.open("_projects/#{CONFIG['project_name']}/code.yml", 'w') do |f|
-            f.write(YAML.dump(code))
-          end
+          file.write(YAML.dump(code))
         end
       end
     end
@@ -56,20 +56,20 @@ module Grade
 
     desc 'run_tests [dce]', 'runs the tests for everyone or specific user'
     def run_tests(person=nil)
+      FileUtils.mkdir_p("_projects/#{CONFIG['project_name']}")
+      file = File.open("_projects/#{CONFIG['project_name']}/tests.yml", "rw")
       if person.nil?
         Helpers.run_tests
       else
         person = person.dup
-        tests = YAML.load(File.open("_projects/#{CONFIG['project_name']}/tests.yml"))
+        tests = YAML.load(file)
         tests = '' unless tests
         tests = {} if tests.empty?
         begin
           tests[person] = Helpers.run_tests_for(person)
           tests = Hash[tests.sort]
         ensure
-          File.open("_projects/#{CONFIG['project_name']}/tests.yml", 'w') do |f|
-            f.write(YAML.dump(tests))
-          end
+          file.write(YAML.dump(tests))
         end
       end
     end
