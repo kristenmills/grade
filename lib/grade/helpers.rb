@@ -1,7 +1,7 @@
 require 'git'
 require 'colorize'
 require 'highline/import'
-require "#{Dir.pwd}/_projects/#{Grade::CONFIG['project_name']}/#{Grade::CONFIG['test_file']}"
+require "#{Dir.pwd}/_projects/#{Grade::CONFIG['project_name']}/#{Grade::CONFIG['test_file']}" unless Grade::CONFIG['test_file'].nil?
 
 module Grade
   module Helpers

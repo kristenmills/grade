@@ -12,7 +12,8 @@ module Grade
     desc 'journal [dce]', 'Checks the activity journals for everyone'
     def journal(person=nil)
       FileUtils.mkdir_p("_projects/#{CONFIG['project_name']}")
-      file = File.open("_projects/#{CONFIG['project_name']}/journals.yml", 'rw')
+      FileUtils.touch("_projects/#{CONFIG['project_name']}/journals.yml")
+      file = File.open("_projects/#{CONFIG['project_name']}/journals.yml", 'r+')
       if person.nil?
         Helpers.activity_journals(file)
       else
@@ -32,7 +33,8 @@ module Grade
     desc 'view [dce]', 'views the code for everyone or specific user'
     def view(person=nil)
       FileUtils.mkdir_p("_projects/#{CONFIG['project_name']}")
-      file = File.open("_projects/#{CONFIG['project_name']}/code.yml", 'rw')
+      FileUtils.touch("_projects/#{CONFIG['project_name']}/code.yml")
+      file = File.open("_projects/#{CONFIG['project_name']}/code.yml", 'r+')
       if person.nil?
         Helpers.view_code
       else
@@ -57,7 +59,8 @@ module Grade
     desc 'run_tests [dce]', 'runs the tests for everyone or specific user'
     def run_tests(person=nil)
       FileUtils.mkdir_p("_projects/#{CONFIG['project_name']}")
-      file = File.open("_projects/#{CONFIG['project_name']}/tests.yml", "rw")
+      FileUtils.touch("_projects/#{CONFIG['project_name']}/tests.yml")
+      file = File.open("_projects/#{CONFIG['project_name']}/tests.yml", "r+")
       if person.nil?
         Helpers.run_tests
       else
